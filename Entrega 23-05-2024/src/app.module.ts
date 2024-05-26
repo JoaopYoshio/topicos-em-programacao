@@ -5,20 +5,18 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { CreaturesModule } from './creatures/creatures.module';
-import { LogModel } from './common/interceptor/log.model';
-import { Log, LogSchema } from './common/interceptor/log.schema';
 import { LoggingInterceptor } from './common/interceptor/logging.interceptor';
 
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Log.name, schema: LogSchema }]),
+    MongooseModule.forRoot('mongodb://0.0.0.0/elden-ring'),
     UsersModule,
     AuthModule,
     CreaturesModule
   ],
   controllers: [],
-  providers: [AppService, LoggingInterceptor, LogModel],
+  providers: [AppService, LoggingInterceptor],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

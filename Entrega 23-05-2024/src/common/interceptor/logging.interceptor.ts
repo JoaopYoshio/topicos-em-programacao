@@ -1,30 +1,16 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { LogModel } from './log.model';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-    constructor(private readonly logModel: LogModel) { }
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    console.log('Interceptando requisição...');
 
-    intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-        const httpContext = context.switchToHttp();
-        const request = httpContext.getRequest<Request>();
+    const now = Date.now();
 
-        const requestTime = Date.now();
-
-        return next
-            .handle()
-            .pipe(
-                tap(async (response) => {
-                    const diffTime = Date.now() - requestTime;
-
-                    await this.logModel.createLog({
-                        request: request,
-                        response: response,
-                        responseTime: diffTime
-                    })
-                }),
-            );
-    }
+    return next.handle().pipe(
+      tap(() => console.log(`Requisição concluída em ${Date.now() - now}ms`)),
+    );
+  }
 }
